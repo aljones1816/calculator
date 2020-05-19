@@ -1,0 +1,29 @@
+* {
+    margin: 0;
+    padding: 0;
+  }
+
+#container {
+    height: 600px;
+    width: 400px;
+    background-color: grey;
+    margin: 0 auto;
+}
+
+#screen {
+    width: 340px;
+    height: 85px;
+    background-color: pink;
+    margin: 0 auto;
+    
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+  }
+
+  .grid-item {
+      background-color: white;
+  }
