@@ -11,10 +11,14 @@ function subtract (...args) {
 }
 
 
-function multiply () {
-	
+function multiply (...args) {
+	return args.reduce(function (acc, cur) {
+		return acc * cur;
+	})
 }
 
-function divide() {
-	
+function divide(...args) {
+	return args.reduce(function (acc, cur) {
+		return acc / cur;
+	})
 }
