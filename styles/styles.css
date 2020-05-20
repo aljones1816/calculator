@@ -3,6 +3,11 @@
     padding: 0;
 }
 
+@font-face{
+    font-family:'digital-calc';
+    src: '../digital-7.ttf';
+}
+
 #container {
     height: 400px;
     width: 300px;
@@ -19,7 +24,8 @@
     background-color: pink;
     margin: 0 auto 15px;
     border-radius: 10px;
-    background-color: RGB(206,205,200)
+    background-color: RGB(206,205,200);
+    font-family: digital-calc;
 }
 
 .grid-container {
