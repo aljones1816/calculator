@@ -104,8 +104,8 @@ function updateHistory() {
 	}
 	document.getElementById('history').innerHTML = string + ' =';
 	document.getElementById('current').innerHTML = evalToo(string);
-	ans = evalToo(string);
-	string = evalToo(string);
+	ans = evalToo(string).toString();
+	string = evalToo(string).toString();
 
 }
 
