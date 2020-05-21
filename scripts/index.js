@@ -3,12 +3,14 @@ let buttons = document.querySelectorAll('.visi-but');
 
 // basic arithmetic functions - each takes user input and returns a single number
 function add(numArray) {
+	numArray = numArray.map(Number);
 	return numArray.reduce(function (acc, cur) {
 		return acc + cur;
 	})
 }
 
 function subtract(numArray) {
+	numArray = numArray.map(number);
 	return numArray.reduce(function (acc, cur) {
 		return acc - cur;
 	})
@@ -16,12 +18,14 @@ function subtract(numArray) {
 
 
 function multiply(numArray) {
+	numArray = numArray.map(number);
 	return numArray.reduce(function (acc, cur) {
 		return acc * cur;
 	})
 }
 
 function divide(numArray) {
+	numArray = numArray.map(number)
 	return numArray.reduce(function (acc, cur) {
 		return acc / cur;
 	})
@@ -75,6 +79,20 @@ function resetDisplay() {
 	updateDisplay();
 	string = '';
 
+}
+
+// function to loop through an array of strings and find and evaluate expressions following pemdas
+function evalToo(strArray) {
+while (strArray.indexOf('+') >-1) {
+	strArray.splice(strArray.indexOf('+')-1,3,
+	add([strArray[strArray.indexOf('+')-1],strArray[strArray.indexOf('+')+1]]))
+}
+}
+
+expArray = [];
+// function that breaks up a string into an array on spaces 
+function breakUp (string) {
+	expArray = string.split(" ");
 }
 
 // event listener for retrieving user input and displaying it on screen

@@ -15,6 +15,7 @@ button {
     padding-top: 15px;
     padding-bottom: 15px;
     border-radius: 10px;
+    box-shadow: 5px 5px 5px;
 }
 
 #screen {
