@@ -52,8 +52,8 @@ function breakUp(string) {
 }
 
 // function to loop through an array of strings and find and evaluate expressions following pemdas
-function evalToo(string) {
-	strArray = breakUp(string);
+function evalToo(strArray) {
+
 
 	while (strArray.indexOf('*') > -1) {
 		strArray.splice(strArray.indexOf('*') - 1, 3,
@@ -72,7 +72,7 @@ function evalToo(string) {
 			operate('-', [strArray[strArray.indexOf('-') - 1], strArray[strArray.indexOf('-') + 1]]))
 	}
 
-	return strArray[0];
+	return strArray;
 }
 
 // function for deleting last entry
@@ -102,10 +102,11 @@ function updateHistory() {
 	if (string.length == 0) {
 		string = '0';
 	}
+	strArray = breakUp(string);
 	document.getElementById('history').innerHTML = string + ' =';
-	document.getElementById('current').innerHTML = evalToo(string);
-	ans = evalToo(string).toString();
-	string = evalToo(string).toString();
+	document.getElementById('current').innerHTML = jujubean(strArray);
+	ans = jujubean(strArray).toString();
+	string = jujubean(strArray).toString();
 
 }
 
@@ -139,3 +140,21 @@ document.getElementById('delete').addEventListener('click', delLast)
 
 // event listener that updates history when equals is clicked
 document.getElementById('equals').addEventListener('click', updateHistory)
+
+function jujubean(stringArray) {
+	for (let i = stringArray.length - 1; i >= 0; i--) {
+		if (stringArray[i] == '(') {
+			for (let j = i; j <= stringArray.length - 1; j++) {
+				if (stringArray[j] == ')') {
+					stringArray.splice(i, j + 1, evalToo(stringArray.slice(i + 1, j)))
+					break;
+				}
+
+			}
+		}
+	}
+
+
+	stringArray = evalToo(stringArray);
+	return stringArray[0];
+}
