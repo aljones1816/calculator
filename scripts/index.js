@@ -124,8 +124,10 @@ function resetDisplay() {
 // event listener for retrieving user input and displaying it on screen
 buttons.forEach(button => {
 	button.addEventListener('click', function () {
+
 		string += button.value;
 		updateDisplay();
+
 	});
 })
 
