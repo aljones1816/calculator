@@ -171,7 +171,7 @@ function jujubean(stringArray) {
 			for (let j = i; j <= stringArray.length - 1; j++) {
 				if (stringArray[j] == ')') {
 					console.log('before',stringArray);
-					stringArray.splice(i, 5, evalToo(stringArray.slice(i+1,j))[0].toString())
+					stringArray.splice(i, j-i+1, evalToo(stringArray.slice(i+1,j))[0].toString())
 					
 					console.log('after',stringArray)
 					break;
