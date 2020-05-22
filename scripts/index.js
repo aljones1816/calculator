@@ -1,6 +1,7 @@
 let string = '';
 let buttons = document.querySelectorAll('.visi-but');
 let ans = '';
+let operations = ['/', '*', '+', '-'];
 
 // basic arithmetic functions - each takes user input and returns a single number
 function add(numArray) {
@@ -51,6 +52,7 @@ function breakUp(string) {
 	return string.split(" ");
 }
 
+
 // function to loop through an array of strings and find and evaluate expressions following pemdas
 function evalToo(strArray) {
 
@@ -73,6 +75,7 @@ function evalToo(strArray) {
 	}
 
 	return strArray;
+
 }
 
 // function for deleting last entry
@@ -99,6 +102,15 @@ function updateDisplay() {
 
 // function that updates the history when equals pressed
 function updateHistory() {
+	console.log(string);
+	if (string[0] == ' ') {
+		string = string.slice(1, string.length - 1)
+	}
+
+	if (string[string.length - 1] == ' ') {
+		string = string.slice(0, string.length - 1);
+	}
+	console.log(string);
 	if (string.length == 0) {
 		string = '0';
 	}
@@ -125,8 +137,20 @@ function resetDisplay() {
 // event listener for retrieving user input and displaying it on screen
 buttons.forEach(button => {
 	button.addEventListener('click', function () {
+		// ensures that two operations aren't pressed in a row
+		// doesn't allow two spaces to be typed in a row
+		if (['*', '/', '-', '+', '(', ')'].includes(button.value)) {
+			if (['*', '/', '+', '-'].includes(string[string.length - 2]) && operations.includes(button.value)) {
+				return
+			} else if (string[string.length - 1] == ' ') {
+				string = string + button.value + ' ';
+			} else {
+				string = string + ' ' + button.value + ' ';
+			}
+		} else string += button.value;
 
-		string += button.value;
+
+
 		updateDisplay();
 
 	});
@@ -146,7 +170,10 @@ function jujubean(stringArray) {
 		if (stringArray[i] == '(') {
 			for (let j = i; j <= stringArray.length - 1; j++) {
 				if (stringArray[j] == ')') {
-					stringArray.splice(i, j + 1, evalToo(stringArray.slice(i + 1, j)))
+					console.log('before',stringArray);
+					stringArray.splice(i, 5, evalToo(stringArray.slice(i+1,j))[0].toString())
+					
+					console.log('after',stringArray)
 					break;
 				}
 
@@ -155,6 +182,6 @@ function jujubean(stringArray) {
 	}
 
 
-	stringArray = evalToo(stringArray);
-	return stringArray[0];
+	return evalToo(stringArray)[0];
+
 }
