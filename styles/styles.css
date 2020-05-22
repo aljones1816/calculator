@@ -27,6 +27,7 @@ button {
     background-color: RGB(206,205,200);
     font-family: 'Orbitron', sans-serif;
     position: relative;
+    overflow: hidden;
     
 }
 
@@ -101,6 +102,7 @@ button {
     /* IE10+/Edge */
     user-select: none;
     /* Standard */
+    white-space: nowrap;
 }
 
 #current {
@@ -109,5 +111,6 @@ button {
     right: 10px;
     font-size: 30px;
     color: RGB(30,30,30);
+    white-space: nowrap;
     
 }

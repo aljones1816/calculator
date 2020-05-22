@@ -100,6 +100,29 @@ function updateDisplay() {
 	document.getElementById("current").innerHTML = string;
 }
 
+/* function that checks for unclosed parentheticals and adds closing parentheses to the 
+end of the expression if any hanging opens are identified and adds open parens to 
+beginning of expression if hanging closeds are identified */
+function closeThoseParens(string) {
+	let openTicker = 0;
+	let closedTicker=0;
+	for (let i = 0; i < string.length; i++) {
+		if (string[i] == '(') {
+			openTicker++;
+			console.log(openTicker);
+		} else if (string[i] == ')') {
+			closedTicker++;
+		}
+	}
+
+	while (openTicker > closedTicker){
+		string = string + ')';
+		closedTicker++;
+	}
+
+
+}
+
 // function that updates the history when equals pressed
 function updateHistory() {
 	console.log(string);
@@ -115,6 +138,7 @@ function updateHistory() {
 		string = '0';
 	}
 	strArray = breakUp(string);
+	closeThoseParens(strArray);
 	document.getElementById('history').innerHTML = string + ' =';
 	document.getElementById('current').innerHTML = jujubean(strArray);
 	ans = jujubean(strArray).toString();
@@ -139,6 +163,19 @@ buttons.forEach(button => {
 	button.addEventListener('click', function () {
 		// ensures that two operations aren't pressed in a row
 		// doesn't allow two spaces to be typed in a row
+		let openCount = 0;
+		if (button.value == ')') {
+			
+			for (let i = 0; i<string.length;i++) {
+				if (string[i] == '(') {
+					openCount++;
+				}
+			}
+			if (openCount < 1) {
+				return
+			}
+		}
+		
 		if (['*', '/', '-', '+', '(', ')'].includes(button.value)) {
 			if (['*', '/', '+', '-'].includes(string[string.length - 2]) && operations.includes(button.value)) {
 				return
@@ -146,7 +183,7 @@ buttons.forEach(button => {
 				string = string + button.value + ' ';
 			} else {
 				string = string + ' ' + button.value + ' ';
-			}
+			} 
 		} else string += button.value;
 
 
