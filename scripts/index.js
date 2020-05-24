@@ -182,9 +182,11 @@ buttons.forEach(button => {
 		}
 
 		if (['*', '/', '-', '+', '(', ')'].includes(button.value)) {
-			if (['*', '/', '+',].includes(string[string.length - 2]) && operations.includes(button.value)) {
+			if ((['*', '/', '+'].includes(string[string.length - 2]) && ['*', '/', '+'].includes(button.value)) 
+					|| (button.value == '-' && string[string.length-1] == '-')
+					|| (button.value == '-' && string[string.length-1] == ' ' && string[string.length-2]=='-')) {
 				return
-			} else if (button.value == '-' && (string.length == 0 || string[string.length - 2] == '(')) {
+			} else if (button.value == '-' && (string.length == 0 || ['+','/','*','('].includes(string[string.length - 2]) )) {
 				string = string + button.value;
 			} else if (string[string.length - 1] == ' ') {
 				string = string + button.value + ' ';
