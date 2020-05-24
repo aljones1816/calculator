@@ -103,29 +103,29 @@ function updateDisplay() {
 /* function that checks for unclosed parentheticals and adds closing parentheses to the 
 end of the expression if any hanging opens are identified and adds open parens to 
 beginning of expression if hanging closeds are identified */
-function closeThoseParens(string) {
+function closeThoseParens(badString) {
 	let openTicker = 0;
-	let closedTicker=0;
-	for (let i = 0; i < string.length; i++) {
-		if (string[i] == '(') {
+	let closedTicker = 0;
+	for (let i = 0; i < badString.length; i++) {
+		if (badString[i] === '(') {
 			openTicker++;
-			console.log(openTicker);
-		} else if (string[i] == ')') {
+		} else if (badString[i] === ')') {
 			closedTicker++;
 		}
 	}
-
-	while (openTicker > closedTicker){
-		string = string + ')';
+	while (openTicker > closedTicker) {
+		badString += " ) "
 		closedTicker++;
 	}
 
-
+	string = badString;
 }
 
 // function that updates the history when equals pressed
 function updateHistory() {
-	console.log(string);
+	console.log('1',string)
+	closeThoseParens(string);
+	console.log('3 - close',string);
 	if (string[0] == ' ') {
 		string = string.slice(1, string.length - 1)
 	}
@@ -133,12 +133,17 @@ function updateHistory() {
 	if (string[string.length - 1] == ' ') {
 		string = string.slice(0, string.length - 1);
 	}
-	console.log(string);
+
 	if (string.length == 0) {
 		string = '0';
 	}
+	console.log('2',string);
+
+	
+
 	strArray = breakUp(string);
-	closeThoseParens(strArray);
+	console.log('4',string)
+
 	document.getElementById('history').innerHTML = string + ' =';
 	document.getElementById('current').innerHTML = jujubean(strArray);
 	ans = jujubean(strArray).toString();
@@ -165,8 +170,8 @@ buttons.forEach(button => {
 		// doesn't allow two spaces to be typed in a row
 		let openCount = 0;
 		if (button.value == ')') {
-			
-			for (let i = 0; i<string.length;i++) {
+
+			for (let i = 0; i < string.length; i++) {
 				if (string[i] == '(') {
 					openCount++;
 				}
@@ -175,7 +180,7 @@ buttons.forEach(button => {
 				return
 			}
 		}
-		
+
 		if (['*', '/', '-', '+', '(', ')'].includes(button.value)) {
 			if (['*', '/', '+', '-'].includes(string[string.length - 2]) && operations.includes(button.value)) {
 				return
@@ -183,7 +188,7 @@ buttons.forEach(button => {
 				string = string + button.value + ' ';
 			} else {
 				string = string + ' ' + button.value + ' ';
-			} 
+			}
 		} else string += button.value;
 
 
@@ -207,10 +212,7 @@ function jujubean(stringArray) {
 		if (stringArray[i] == '(') {
 			for (let j = i; j <= stringArray.length - 1; j++) {
 				if (stringArray[j] == ')') {
-					console.log('before',stringArray);
-					stringArray.splice(i, j-i+1, evalToo(stringArray.slice(i+1,j))[0].toString())
-					
-					console.log('after',stringArray)
+					stringArray.splice(i, j - i + 1, evalToo(stringArray.slice(i + 1, j))[0].toString())
 					break;
 				}
 
