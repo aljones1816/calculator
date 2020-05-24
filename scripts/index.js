@@ -43,13 +43,13 @@ function divide(numArray) {
 // function that takes an array of numbers and calls one of the arithmetic functions
 function operate(operator, numArray) {
 	if (operator == '+') {
-		return add(numArray);
+		return round(add(numArray), 6);
 	} else if (operator == '-') {
-		return subtract(numArray);
+		return round(subtract(numArray), 6);
 	} else if (operator == '*') {
-		return multiply(numArray);
+		return round(multiply(numArray), 6);
 	} else if (operator == '/') {
-		return divide(numArray);
+		return round(divide(numArray), 6);
 	} else return;
 }
 
@@ -153,6 +153,10 @@ function updateHistory() {
 		return
 	}
 
+	// check that we aren't trying to submit a single open parenthesis
+	if (string == ' ( ') {
+		return;
+	}
 
 	// next ensure that all open parentheses are closed
 
@@ -161,9 +165,9 @@ function updateHistory() {
 	console.log(string)
 	// next ensure that the beginning and end of the string aren't spaces
 	if (string[0] == ' ') {
-		string=string.slice(1, string.length)
+		string = string.slice(1, string.length)
 	}
-	
+
 	if (string[string.length - 1] == ' ') {
 		string = string.slice(0, string.length - 1);
 	}
@@ -171,10 +175,10 @@ function updateHistory() {
 	if (string.length == 0) {
 		string = '0';
 	}
-console.log(string)
+	console.log(string)
 	// next break up string into an array with space delimiters
 	strArray = breakUp(string);
-console.log(strArray)
+	console.log(strArray)
 	// next mmodify the display to show the answer to the expression
 	document.getElementById('history').innerHTML = string + ' =';
 	document.getElementById('current').innerHTML = jujubean(strArray);
@@ -213,6 +217,10 @@ function getInput(value) {
 		return
 	}
 
+	if (value == '.' && string[string.length - 1] == '.') {
+		return;
+	}
+
 
 
 	if (['+', '-', '*', '/', '(', ')'].includes(value)) {
@@ -225,6 +233,10 @@ function getInput(value) {
 				string = string + value + ' ';
 			} else {
 				string = string + ' ' + value + ' ';
+			}
+		} else if (string[string.length - 1] == '.') {
+			if (string.length == 1 || string[string.length - 2] == ' ') {
+				return
 			}
 		} else if (['*', '/', '+', ')'].includes(value)) {
 			if (['*', '/', '+'].includes(value) && string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
@@ -239,7 +251,7 @@ function getInput(value) {
 				string = string + ' ' + value + ' ';
 			}
 		} else if (value == '(') {
-			if (['1','2','3','4','5','6','7','8','9','0'].includes(string[string.length-1])) {
+			if (['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].includes(string[string.length - 1])) {
 				string = string + ' ' + '*' + ' ' + value + ' ';
 			} else if (string[string.length - 1] == ' ') {
 				string = string + value + ' ';
@@ -248,7 +260,8 @@ function getInput(value) {
 			}
 		}
 
-	} else if (['1','2','3','4','5','6','7','8','9','0'].includes(value) && string[string.length-2] == ')') {
+
+	} else if (['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].includes(value) && string[string.length - 2] == ')') {
 		string = string + '*' + ' ' + value;
 	} else string += value;
 
