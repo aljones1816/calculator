@@ -3,6 +3,10 @@
     padding: 0;
 }
 
+body {
+    Touch-action: manipulation;
+}
+
 button {
     all: unset;
 }

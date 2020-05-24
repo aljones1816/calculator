@@ -181,23 +181,30 @@ buttons.forEach(button => {
 			}
 		}
 
-		if (['*', '/', '-', '+', '(', ')'].includes(button.value)) {
-			if ((['*', '/', '+'].includes(string[string.length - 2]) && ['*', '/', '+'].includes(button.value)) 
-					|| (button.value == '-' && string[string.length-1] == '-')
-					|| (button.value == '-' && string[string.length-1] == ' ' && string[string.length-2]=='-')) {
-				return
-			} else if (button.value == '-' && (string.length == 0 || ['+','/','*','('].includes(string[string.length - 2]) )) {
-				string = string + button.value;
-			} else if (string[string.length - 1] == ' ') {
-				string = string + button.value + ' ';
-			} else {
-				string = string + ' ' + button.value + ' ';
+		if (['+', '-', '*', '/', '(', ')'].includes(button.value)) {
+			if (button.value == '-') {
+				if (string.length == 0 || ['+','*','/','('].includes(string[string.length - 2])) {
+					string = string + button.value;
+				} else if (string[string.length-2] == '-' && string[string.length-2] == ' ') {
+					return;
+				} else if (string[string.length - 1] == ' ') {
+					string = string + button.value + ' ';
+				} else {
+					string = string + ' ' + button.value + ' ';
+				}
+			} else if (['*', '/', '+', '(', ')'].includes(button.value)) {
+				if (['*', '/', '+'].includes(button.value) && string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
+					return;
+				} else if (['*', '/', '+'].includes(button.value) && ['*', '/', '+'].includes(string[string.length - 2])) {
+					return
+				} else if (string[string.length - 1] == ' ') {
+					string = string + button.value + ' ';
+				} else {
+					string = string + ' ' + button.value + ' ';
+				}
 			}
+
 		} else string += button.value;
-
-		if (button.value == '-') {
-
-		}
 
 		updateDisplay();
 
