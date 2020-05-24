@@ -123,26 +123,26 @@ function closeThoseParens(badString) {
 
 // function that updates the history when equals pressed
 function updateHistory() {
-	console.log('1',string)
+
 	closeThoseParens(string);
-	console.log('3 - close',string);
+	console.log(string);
 	if (string[0] == ' ') {
 		string = string.slice(1, string.length - 1)
 	}
-
+	console.log('1', string)
 	if (string[string.length - 1] == ' ') {
 		string = string.slice(0, string.length - 1);
 	}
-
+	console.log('2', string)
 	if (string.length == 0) {
 		string = '0';
 	}
-	console.log('2',string);
+	console.log('3', string);
 
-	
+
 
 	strArray = breakUp(string);
-	console.log('4',string)
+	console.log('4', string)
 
 	document.getElementById('history').innerHTML = string + ' =';
 	document.getElementById('current').innerHTML = jujubean(strArray);
@@ -182,8 +182,10 @@ buttons.forEach(button => {
 		}
 
 		if (['*', '/', '-', '+', '(', ')'].includes(button.value)) {
-			if (['*', '/', '+', '-'].includes(string[string.length - 2]) && operations.includes(button.value)) {
+			if (['*', '/', '+',].includes(string[string.length - 2]) && operations.includes(button.value)) {
 				return
+			} else if (button.value == '-' && (string.length == 0 || string[string.length - 2] == '(')) {
+				string = string + button.value;
 			} else if (string[string.length - 1] == ' ') {
 				string = string + button.value + ' ';
 			} else {
@@ -191,7 +193,9 @@ buttons.forEach(button => {
 			}
 		} else string += button.value;
 
+		if (button.value == '-') {
 
+		}
 
 		updateDisplay();
 
