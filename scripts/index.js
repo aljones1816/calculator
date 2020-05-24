@@ -128,29 +128,54 @@ function closeThoseParens(badString) {
 	string = badString;
 }
 
+
+
 // function that updates the history when equals pressed
 function updateHistory() {
 
-	closeThoseParens(string);
+	// first check that user hasn't ended on an operator - return function if so
+	let numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+	let operators = ['+', '-', '*', '/'];
+	let numIndexes = [];
+	let opIndexes = [];
 
-	if (string[0] == ' ') {
-		string = string.slice(1, string.length - 1)
+	numbers.forEach(function (item) {
+		numIndexes.push(string.lastIndexOf(item))
+
+	})
+
+	operators.forEach(function (item) {
+		opIndexes.push(string.lastIndexOf(item))
+
+	})
+
+	if (Math.max(...numIndexes) < Math.max(...opIndexes)) {
+		return
 	}
 
+
+	// next ensure that all open parentheses are closed
+
+	closeThoseParens(string);
+
+	
+	// next ensure that the beginning and end of the string aren't spaces
+	if (string[0] == ' ') {
+		string.slice(1, string.length - 1)
+	}
+	
 	if (string[string.length - 1] == ' ') {
 		string = string.slice(0, string.length - 1);
 	}
-	console.log('2', string)
+
 	if (string.length == 0) {
 		string = '0';
 	}
 
-
-
-
+	// next break up string into an array with space delimiters
 	strArray = breakUp(string);
-	console.log('4', string)
 
+	// next mmodify the display to show the answer to the expression
 	document.getElementById('history').innerHTML = string + ' =';
 	document.getElementById('current').innerHTML = jujubean(strArray);
 	ans = jujubean(strArray).toString();
@@ -170,122 +195,55 @@ function resetDisplay() {
 
 }
 
-// event listener for retrieving user input and displaying it on screen
-buttons.forEach(button => {
-	button.addEventListener('click', function () {
-		// ensures that two operations aren't pressed in a row
-		// doesn't allow two spaces to be typed in a row
-		let openCount = 0;
-		if (button.value == ')') {
-
-			for (let i = 0; i < string.length; i++) {
-				if (string[i] == '(') {
-					openCount++;
-				}
-			}
-			if (openCount < 1) {
-				return
-			}
+// function to get user input and turn it into an expression
+function getInput(value) {
+	// ensures that two operations aren't pressed in a row
+	// doesn't allow two spaces to be typed in a row
+	let openCount = 0;
+	let closedCount = 0;
+	for (let i = 0; i < string.length; i++) {
+		if (string[i] == '(') {
+			openCount++;
+		} else if (string[i] == ')') {
+			closedCount++;
 		}
-
-		if (['+', '-', '*', '/', '(', ')'].includes(button.value)) {
-			if (button.value == '-') {
-				if (string.length == 0 || ['+', '*', '/', '('].includes(string[string.length - 2])) {
-					string = string + button.value;
-				} else if (string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
-					return;
-				} else if (string[string.length - 1] == ' ') {
-					string = string + button.value + ' ';
-				} else {
-					string = string + ' ' + button.value + ' ';
-				}
-			} else if (['*', '/', '+', '(', ')'].includes(button.value)) {
-				if (['*', '/', '+'].includes(button.value) && string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
-					return;
-				} else if (['*', '/', '+'].includes(button.value) && ['*', '/', '+'].includes(string[string.length - 2])) {
-					return
-				} else if (['*', '/', '+'].includes(button.value) && string.length == 0) {
-					return;
-				} else if (string[string.length - 1] == ' ') {
-					string = string + button.value + ' ';
-				} else {
-					string = string + ' ' + button.value + ' ';
-				}
-			}
-
-		} else string += button.value;
-
-		updateDisplay();
-
-	});
-})
-
-// event listener for getting keyboard input 
-document.addEventListener('keydown', function (pressed) {
-	if ('1234567890-*/+()'.includes(pressed.key)) {
-		// ensures that two operations aren't pressed in a row
-		// doesn't allow two spaces to be typed in a row
-		let openCount = 0;
-		if (pressed.key == ')') {
-
-			for (let i = 0; i < string.length; i++) {
-				if (string[i] == '(') {
-					openCount++;
-				}
-			}
-			if (openCount < 1) {
-				return
-			}
-		}
-
-		if (['+', '-', '*', '/', '(', ')'].includes(pressed.key)) {
-			if (pressed.key == '-') {
-				if (string.length == 0 || ['+', '*', '/', '('].includes(string[string.length - 2])) {
-					string = string + pressed.key;
-				} else if (string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
-					return;
-				} else if (string[string.length - 1] == ' ') {
-					string = string + pressed.key + ' ';
-				} else {
-					string = string + ' ' + pressed.key + ' ';
-				}
-			} else if (['*', '/', '+', '(', ')'].includes(pressed.key)) {
-				if (['*', '/', '+'].includes(pressed.key) && string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
-					return;
-				} else if (['*', '/', '+'].includes(pressed.key) && ['*', '/', '+'].includes(string[string.length - 2])) {
-					return
-				} else if (['*', '/', '+'].includes(pressed.key) && string.length == 0) {
-					return;
-				} else if (string[string.length - 1] == ' ') {
-					string = string + pressed.key + ' ';
-				} else {
-					string = string + ' ' + pressed.key + ' ';
-				}
-			}
-
-		} else string += pressed.key;
-
-		
 	}
+
+	if (value == ')' && (closedCount >= openCount || string[string.length - 2] == '(')) {
+		return
+	}
+
+	if (['+', '-', '*', '/', '(', ')'].includes(value)) {
+		if (value == '-') {
+			if (string.length == 0 || ['+', '*', '/', '('].includes(string[string.length - 2])) {
+				string = string + value;
+			} else if (string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
+				return;
+			} else if (string[string.length - 1] == ' ') {
+				string = string + value + ' ';
+			} else {
+				string = string + ' ' + value + ' ';
+			}
+		} else if (['*', '/', '+', '(', ')'].includes(value)) {
+			if (['*', '/', '+'].includes(value) && string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
+				return;
+			} else if (['*', '/', '+'].includes(value) && ['*', '/', '+'].includes(string[string.length - 2])) {
+				return
+			} else if (['*', '/', '+'].includes(value) && string.length == 0) {
+				return;
+			} else if (string[string.length - 1] == ' ') {
+				string = string + value + ' ';
+			} else {
+				string = string + ' ' + value + ' ';
+			}
+		}
+
+	} else string += value;
 
 	updateDisplay();
-})
+}
 
-// event listener for clearing the display
-document.getElementById('clear').addEventListener('click', resetDisplay)
-
-// event listener for delete button - removes last button entry
-document.getElementById('delete').addEventListener('click', delLast)
-
-// event listener that updates history when equals is clicked
-document.getElementById('equals').addEventListener('click', updateHistory)
-
-document.addEventListener('keydown', function(pressed) {
-	if (pressed.keyCode === 13 || pressed.key === '=') {
-		updateHistory();
-	}
-})
-
+// function that makes parnetheses work in order of operations 
 function jujubean(stringArray) {
 	for (let i = stringArray.length - 1; i >= 0; i--) {
 		if (stringArray[i] == '(') {
@@ -303,3 +261,48 @@ function jujubean(stringArray) {
 	return evalToo(stringArray)[0];
 
 }
+
+// event listener for retrieving user input and displaying it on screen
+buttons.forEach(button => {
+	button.addEventListener('click', function () {
+		let value = button.value;
+		getInput(value);
+
+	});
+})
+
+// event listener for getting keyboard input 
+document.addEventListener('keydown', function (pressed) {
+	if ('1234567890-*/+()'.includes(pressed.key)) {
+		let value = pressed.key;
+		getInput(value);
+	}
+
+	// pressing c clears display
+	if (pressed.key === 'c') {
+		resetDisplay();
+	}
+
+	// pressing delete key deletes last
+	if (pressed.keyCode === 8) {
+		delLast();
+	}
+
+	// pressing return/enter key sets equals
+	if (pressed.keyCode === 13 || pressed.key === '=') {
+		updateHistory();
+	}
+
+})
+
+// event listener for clearing the display by clicking AC
+document.getElementById('clear').addEventListener('click', resetDisplay)
+
+
+// event listener for delete button - removes last button entry
+document.getElementById('delete').addEventListener('click', delLast)
+
+
+// event listener that updates history when equals is clicked
+document.getElementById('equals').addEventListener('click', updateHistory)
+
