@@ -153,6 +153,11 @@ function updateHistory() {
 		return
 	}
 
+	// check that user isn't trying to submit a single decimal point
+	if (string == '.') {
+		return
+	}
+
 	// check that we aren't trying to submit a single open parenthesis
 	if (string == ' ( ') {
 		return;
@@ -227,6 +232,10 @@ function getInput(value) {
 		if (value == '-') {
 			if (string.length == 0 || ['+', '*', '/', '('].includes(string[string.length - 2])) {
 				string = string + value;
+			} else if (string[string.length - 1] == '.') {
+				if (string.length == 1 || string[string.length - 2] == ' ') {
+					return
+				}
 			} else if (string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
 				return;
 			} else if (string[string.length - 1] == ' ') {
@@ -298,7 +307,7 @@ buttons.forEach(button => {
 
 // event listener for getting keyboard input 
 document.addEventListener('keydown', function (pressed) {
-	if ('1234567890-*/+()'.includes(pressed.key)) {
+	if ('1234567890-*/+().'.includes(pressed.key)) {
 		let value = pressed.key;
 		getInput(value);
 	}
