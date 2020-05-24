@@ -3,34 +3,41 @@ let buttons = document.querySelectorAll('.visi-but');
 let ans = '';
 let operations = ['/', '*', '+', '-'];
 
+// simple rounding function
+function round(value, decimals) {
+	return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+}
+
 // basic arithmetic functions - each takes user input and returns a single number
+
+
 function add(numArray) {
 	numArray = numArray.map(Number);
-	return numArray.reduce(function (acc, cur) {
+	return round(numArray.reduce(function (acc, cur) {
 		return acc + cur;
-	})
+	}), 8)
 }
 
 function subtract(numArray) {
 	numArray = numArray.map(Number);
-	return numArray.reduce(function (acc, cur) {
+	return round(numArray.reduce(function (acc, cur) {
 		return acc - cur;
-	})
+	}), 8)
 }
 
 
 function multiply(numArray) {
 	numArray = numArray.map(Number);
-	return numArray.reduce(function (acc, cur) {
+	return round(numArray.reduce(function (acc, cur) {
 		return acc * cur;
-	})
+	}), 8)
 }
 
 function divide(numArray) {
 	numArray = numArray.map(Number);
-	return numArray.reduce(function (acc, cur) {
+	return round(numArray.reduce(function (acc, cur) {
 		return acc / cur;
-	})
+	}), 8)
 }
 
 // function that takes an array of numbers and calls one of the arithmetic functions
@@ -125,11 +132,11 @@ function closeThoseParens(badString) {
 function updateHistory() {
 
 	closeThoseParens(string);
-	console.log(string);
+
 	if (string[0] == ' ') {
 		string = string.slice(1, string.length - 1)
 	}
-	console.log('1', string)
+
 	if (string[string.length - 1] == ' ') {
 		string = string.slice(0, string.length - 1);
 	}
@@ -137,7 +144,7 @@ function updateHistory() {
 	if (string.length == 0) {
 		string = '0';
 	}
-	console.log('3', string);
+
 
 
 
@@ -183,9 +190,9 @@ buttons.forEach(button => {
 
 		if (['+', '-', '*', '/', '(', ')'].includes(button.value)) {
 			if (button.value == '-') {
-				if (string.length == 0 || ['+','*','/','('].includes(string[string.length - 2])) {
+				if (string.length == 0 || ['+', '*', '/', '('].includes(string[string.length - 2])) {
 					string = string + button.value;
-				} else if (string[string.length-2] == '-' && string[string.length-2] == ' ') {
+				} else if (string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
 					return;
 				} else if (string[string.length - 1] == ' ') {
 					string = string + button.value + ' ';
@@ -197,6 +204,8 @@ buttons.forEach(button => {
 					return;
 				} else if (['*', '/', '+'].includes(button.value) && ['*', '/', '+'].includes(string[string.length - 2])) {
 					return
+				} else if (['*', '/', '+'].includes(button.value) && string.length == 0) {
+					return;
 				} else if (string[string.length - 1] == ' ') {
 					string = string + button.value + ' ';
 				} else {
@@ -211,6 +220,57 @@ buttons.forEach(button => {
 	});
 })
 
+// event listener for getting keyboard input 
+document.addEventListener('keydown', function (pressed) {
+	if ('1234567890-*/+()'.includes(pressed.key)) {
+		// ensures that two operations aren't pressed in a row
+		// doesn't allow two spaces to be typed in a row
+		let openCount = 0;
+		if (pressed.key == ')') {
+
+			for (let i = 0; i < string.length; i++) {
+				if (string[i] == '(') {
+					openCount++;
+				}
+			}
+			if (openCount < 1) {
+				return
+			}
+		}
+
+		if (['+', '-', '*', '/', '(', ')'].includes(pressed.key)) {
+			if (pressed.key == '-') {
+				if (string.length == 0 || ['+', '*', '/', '('].includes(string[string.length - 2])) {
+					string = string + pressed.key;
+				} else if (string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
+					return;
+				} else if (string[string.length - 1] == ' ') {
+					string = string + pressed.key + ' ';
+				} else {
+					string = string + ' ' + pressed.key + ' ';
+				}
+			} else if (['*', '/', '+', '(', ')'].includes(pressed.key)) {
+				if (['*', '/', '+'].includes(pressed.key) && string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
+					return;
+				} else if (['*', '/', '+'].includes(pressed.key) && ['*', '/', '+'].includes(string[string.length - 2])) {
+					return
+				} else if (['*', '/', '+'].includes(pressed.key) && string.length == 0) {
+					return;
+				} else if (string[string.length - 1] == ' ') {
+					string = string + pressed.key + ' ';
+				} else {
+					string = string + ' ' + pressed.key + ' ';
+				}
+			}
+
+		} else string += pressed.key;
+
+		
+	}
+
+	updateDisplay();
+})
+
 // event listener for clearing the display
 document.getElementById('clear').addEventListener('click', resetDisplay)
 
@@ -219,6 +279,12 @@ document.getElementById('delete').addEventListener('click', delLast)
 
 // event listener that updates history when equals is clicked
 document.getElementById('equals').addEventListener('click', updateHistory)
+
+document.addEventListener('keydown', function(pressed) {
+	if (pressed.keyCode === 13 || pressed.key === '=') {
+		updateHistory();
+	}
+})
 
 function jujubean(stringArray) {
 	for (let i = stringArray.length - 1; i >= 0; i--) {
