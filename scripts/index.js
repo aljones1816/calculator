@@ -158,10 +158,10 @@ function updateHistory() {
 
 	closeThoseParens(string);
 
-	
+	console.log(string)
 	// next ensure that the beginning and end of the string aren't spaces
 	if (string[0] == ' ') {
-		string.slice(1, string.length - 1)
+		string=string.slice(1, string.length)
 	}
 	
 	if (string[string.length - 1] == ' ') {
@@ -171,10 +171,10 @@ function updateHistory() {
 	if (string.length == 0) {
 		string = '0';
 	}
-
+console.log(string)
 	// next break up string into an array with space delimiters
 	strArray = breakUp(string);
-
+console.log(strArray)
 	// next mmodify the display to show the answer to the expression
 	document.getElementById('history').innerHTML = string + ' =';
 	document.getElementById('current').innerHTML = jujubean(strArray);
@@ -213,6 +213,8 @@ function getInput(value) {
 		return
 	}
 
+
+
 	if (['+', '-', '*', '/', '(', ')'].includes(value)) {
 		if (value == '-') {
 			if (string.length == 0 || ['+', '*', '/', '('].includes(string[string.length - 2])) {
@@ -224,7 +226,7 @@ function getInput(value) {
 			} else {
 				string = string + ' ' + value + ' ';
 			}
-		} else if (['*', '/', '+', '(', ')'].includes(value)) {
+		} else if (['*', '/', '+', ')'].includes(value)) {
 			if (['*', '/', '+'].includes(value) && string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
 				return;
 			} else if (['*', '/', '+'].includes(value) && ['*', '/', '+'].includes(string[string.length - 2])) {
@@ -236,8 +238,18 @@ function getInput(value) {
 			} else {
 				string = string + ' ' + value + ' ';
 			}
+		} else if (value == '(') {
+			if (['1','2','3','4','5','6','7','8','9','0'].includes(string[string.length-1])) {
+				string = string + ' ' + '*' + ' ' + value + ' ';
+			} else if (string[string.length - 1] == ' ') {
+				string = string + value + ' ';
+			} else {
+				string = string + ' ' + value + ' ';
+			}
 		}
 
+	} else if (['1','2','3','4','5','6','7','8','9','0'].includes(value) && string[string.length-2] == ')') {
+		string = string + '*' + ' ' + value;
 	} else string += value;
 
 	updateDisplay();
@@ -279,7 +291,7 @@ document.addEventListener('keydown', function (pressed) {
 	}
 
 	// pressing c clears display
-	if (pressed.key === 'c') {
+	if (pressed.keyCode === 67) {
 		resetDisplay();
 	}
 
