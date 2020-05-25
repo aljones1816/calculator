@@ -206,8 +206,7 @@ function resetDisplay() {
 
 // function to get user input and turn it into an expression
 function getInput(value) {
-	// ensures that two operations aren't pressed in a row
-	// doesn't allow two spaces to be typed in a row
+	// ensures that a closed paren can't be input without an open paren
 	let openCount = 0;
 	let closedCount = 0;
 	for (let i = 0; i < string.length; i++) {
@@ -222,6 +221,20 @@ function getInput(value) {
 		return
 	}
 
+	// ensures that users cannot type multiple decimals into the same number e.g. 1.2.3.
+	let periodIndex = 0;
+	let spaceIndex = 0;
+
+	if (value == '.' ) {
+		periodIndex = string.lastIndexOf('.');
+		spaceIndex = string.lastIndexOf(' ');
+		if (periodIndex > spaceIndex) {
+			return
+		}
+		
+	}
+
+	// ensures that two periods can't be inut at beginning of string
 	if (value == '.' && string[string.length - 1] == '.') {
 		return;
 	}
