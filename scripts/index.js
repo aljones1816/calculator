@@ -2,6 +2,7 @@ let string = '';
 let buttons = document.querySelectorAll('.visi-but');
 let ans = '';
 let operations = ['/', '*', '+', '-'];
+let rawans=0;
 
 // simple rounding function
 function round(value, decimals) {
@@ -187,6 +188,8 @@ function updateHistory() {
 	// next mmodify the display to show the answer to the expression
 	document.getElementById('history').innerHTML = string + ' =';
 	document.getElementById('current').innerHTML = jujubean(strArray);
+	
+
 	ans = jujubean(strArray).toString();
 	string = jujubean(strArray).toString();
 
@@ -206,6 +209,11 @@ function resetDisplay() {
 
 // function to get user input and turn it into an expression
 function getInput(value) {
+// catches 'x' input for multiplication
+if (value == 'x') {
+	value = '*'
+}
+
 	// ensures that a closed paren can't be input without an open paren
 	let openCount = 0;
 	let closedCount = 0;
@@ -320,7 +328,7 @@ buttons.forEach(button => {
 
 // event listener for getting keyboard input 
 document.addEventListener('keydown', function (pressed) {
-	if ('1234567890-*/+().'.includes(pressed.key)) {
+	if ('1234567890-*x/+().'.includes(pressed.key)) {
 		let value = pressed.key;
 		getInput(value);
 	}
