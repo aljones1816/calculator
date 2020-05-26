@@ -2,7 +2,7 @@ let string = '';
 let buttons = document.querySelectorAll('.visi-but');
 let ans = '';
 let operations = ['/', '*', '+', '-'];
-let rawans=0;
+let rawAns = 0;
 
 // simple rounding function
 function round(value, decimals) {
@@ -14,43 +14,44 @@ function round(value, decimals) {
 
 function add(numArray) {
 	numArray = numArray.map(Number);
-	return round(numArray.reduce(function (acc, cur) {
+	
+	return numArray.reduce(function (acc, cur) {
 		return acc + cur;
-	}), 8)
+	})
 }
 
 function subtract(numArray) {
 	numArray = numArray.map(Number);
-	return round(numArray.reduce(function (acc, cur) {
+	return numArray.reduce(function (acc, cur) {
 		return acc - cur;
-	}), 8)
+	})
 }
 
 
 function multiply(numArray) {
 	numArray = numArray.map(Number);
-	return round(numArray.reduce(function (acc, cur) {
+	return numArray.reduce(function (acc, cur) {
 		return acc * cur;
-	}), 8)
+	})
 }
 
 function divide(numArray) {
 	numArray = numArray.map(Number);
-	return round(numArray.reduce(function (acc, cur) {
+	return numArray.reduce(function (acc, cur) {
 		return acc / cur;
-	}), 8)
+	})
 }
 
 // function that takes an array of numbers and calls one of the arithmetic functions
 function operate(operator, numArray) {
 	if (operator == '+') {
-		return round(add(numArray), 6);
+		return add(numArray);
 	} else if (operator == '-') {
-		return round(subtract(numArray), 6);
+		return subtract(numArray);
 	} else if (operator == '*') {
-		return round(multiply(numArray), 6);
+		return multiply(numArray);
 	} else if (operator == '/') {
-		return round(divide(numArray), 6);
+		return divide(numArray);
 	} else return;
 }
 
@@ -168,7 +169,7 @@ function updateHistory() {
 
 	closeThoseParens(string);
 
-	console.log(string)
+	
 	// next ensure that the beginning and end of the string aren't spaces
 	if (string[0] == ' ') {
 		string = string.slice(1, string.length)
@@ -181,17 +182,32 @@ function updateHistory() {
 	if (string.length == 0) {
 		string = '0';
 	}
-	console.log(string)
+	
 	// next break up string into an array with space delimiters
 	strArray = breakUp(string);
-	console.log(strArray)
+
+// now get a raw value for the result of the calculation
+
+rawAns = jujubean(strArray);
+rawAns = Math.round(rawAns/.000001)*.000001;
+
+
 	// next mmodify the display to show the answer to the expression
 	document.getElementById('history').innerHTML = string + ' =';
-	document.getElementById('current').innerHTML = jujubean(strArray);
 	
+// update the string and display to show the result either as whole numbers or 
+// exponential notaton based on how large the number is
+	if (rawAns > 1000000 || rawAns < .000000) {
+		document.getElementById('current').innerHTML = rawAns.toExponential(4).toString();
+		ans = rawAns.toExponential(4).toString();
+		string = rawAns.toExponential(4).toString();
+	} else {
+		document.getElementById('current').innerHTML = rawAns.toString();
+		ans = rawAns.toString();
+		string = rawAns.toString();
+	}
 
-	ans = jujubean(strArray).toString();
-	string = jujubean(strArray).toString();
+
 
 }
 
@@ -209,10 +225,10 @@ function resetDisplay() {
 
 // function to get user input and turn it into an expression
 function getInput(value) {
-// catches 'x' input for multiplication
-if (value == 'x') {
-	value = '*'
-}
+	// catches 'x' input for multiplication
+	if (value == 'x') {
+		value = '*'
+	}
 
 	// ensures that a closed paren can't be input without an open paren
 	let openCount = 0;
@@ -233,13 +249,13 @@ if (value == 'x') {
 	let periodIndex = 0;
 	let spaceIndex = 0;
 
-	if (value == '.' ) {
+	if (value == '.') {
 		periodIndex = string.lastIndexOf('.');
 		spaceIndex = string.lastIndexOf(' ');
 		if (periodIndex > spaceIndex) {
 			return
 		}
-		
+
 	}
 
 	// ensures that two periods can't be inut at beginning of string
@@ -247,17 +263,22 @@ if (value == 'x') {
 		return;
 	}
 
-
+	// ensures that user can't type an operator right after a parentheses 
+	if (['+', '*', '/'].includes(value) && string[string.length - 2] == '(') {
+		return
+	}
 
 	if (['+', '-', '*', '/', '(', ')'].includes(value)) {
 		if (value == '-') {
 			if (string.length == 0 || ['+', '*', '/', '('].includes(string[string.length - 2])) {
 				string = string + value;
-			} else if (string[string.length - 1] == '.') {
+			} else if (string[string.length - 1] == '.' ) {
 				if (string.length == 1 || string[string.length - 2] == ' ') {
 					return
 				}
 			} else if (string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
+				return;
+			} else if (string[string.length-1] =='-') {
 				return;
 			} else if (string[string.length - 1] == ' ') {
 				string = string + value + ' ';
@@ -296,6 +317,7 @@ if (value == 'x') {
 	} else string += value;
 
 	updateDisplay();
+	console.log(string)
 }
 
 // function that makes parnetheses work in order of operations 
@@ -328,25 +350,27 @@ buttons.forEach(button => {
 
 // event listener for getting keyboard input 
 document.addEventListener('keydown', function (pressed) {
+	console.log(pressed.key);
+	console.log(pressed.keyCode);
 	if ('1234567890-*x/+().'.includes(pressed.key)) {
 		let value = pressed.key;
 		getInput(value);
 	}
 
 	// pressing c clears display
-	if (pressed.keyCode === 67) {
+	else if (pressed.keyCode === 67) {
 		resetDisplay();
 	}
 
 	// pressing delete key deletes last
-	if (pressed.keyCode === 8) {
+	else if (pressed.keyCode === 8) {
 		delLast();
 	}
 
 	// pressing return/enter key sets equals
-	if (pressed.keyCode === 13 || pressed.key === '=') {
+	else if (pressed.keyCode === 13 || pressed.key === '=') {
 		updateHistory();
-	}
+	} else return;
 
 })
 
