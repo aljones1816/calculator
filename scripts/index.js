@@ -197,11 +197,15 @@ rawAns = Math.round(rawAns/.000001)*.000001;
 	
 // update the string and display to show the result either as whole numbers or 
 // exponential notaton based on how large the number is
-	if (rawAns > 1000000 || rawAns < .000000) {
+	if (rawAns > 0 & (rawAns > 1000000 || rawAns < .000000)) {
 		document.getElementById('current').innerHTML = rawAns.toExponential(4).toString();
 		ans = rawAns.toExponential(4).toString();
 		string = rawAns.toExponential(4).toString();
-	} else {
+	} else if (rawAns < 0 & (rawAns < -1000000 || rawAns > -.000000)) {
+		document.getElementById('current').innerHTML = rawAns.toExponential(4).toString();
+		ans = rawAns.toExponential(4).toString();
+		string = rawAns.toExponential(4).toString();
+	}else {
 		document.getElementById('current').innerHTML = rawAns.toString();
 		ans = rawAns.toString();
 		string = rawAns.toString();
@@ -290,7 +294,7 @@ function getInput(value) {
 				return
 			}
 		} else if (['*', '/', '+', ')'].includes(value)) {
-			if (['*', '/', '+'].includes(value) && string[string.length - 2] == '-' && string[string.length - 1] == ' ') {
+			if (['*', '/', '+'].includes(value) && string[string.length - 1] == '-' && string[string.length] == undefined) {
 				return;
 			} else if (['*', '/', '+'].includes(value) && ['*', '/', '+'].includes(string[string.length - 2])) {
 				return
@@ -302,13 +306,19 @@ function getInput(value) {
 				string = string + ' ' + value + ' ';
 			}
 		} else if (value == '(') {
+			
 			if (['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].includes(string[string.length - 1])) {
 				string = string + ' ' + '*' + ' ' + value + ' ';
+			} else if (string[string.length - 1] == '-') {
+				
+				string = string.substring(0,string.length - 1) + '-1 * ' + value + ' '
+			
 			} else if (string[string.length - 1] == ' ') {
 				string = string + value + ' ';
 			} else {
 				string = string + ' ' + value + ' ';
 			}
+		
 		}
 
 
@@ -316,8 +326,9 @@ function getInput(value) {
 		string = string + '*' + ' ' + value;
 	} else string += value;
 
+	
 	updateDisplay();
-	console.log(string)
+	
 }
 
 // function that makes parnetheses work in order of operations 
@@ -350,8 +361,7 @@ buttons.forEach(button => {
 
 // event listener for getting keyboard input 
 document.addEventListener('keydown', function (pressed) {
-	console.log(pressed.key);
-	console.log(pressed.keyCode);
+
 	if ('1234567890-*x/+().'.includes(pressed.key)) {
 		let value = pressed.key;
 		getInput(value);
